@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>UDRU - IT67</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Prompt&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #f5faff;
+        }
+
+        .navbar {
+            margin: 0 auto;
+            text-align: center;
+            background: linear-gradient(to right, #007bff, #00aaff);
+        }
+
+        .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.719);
+            font-weight: 500;
+            margin: 3px;
+        }
+
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        .logo-img {
+            width: 120px;
+            display: block;
+            margin: 1rem auto;
+            animation: bounce 3s infinite ease-in-out;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        #fullLoading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 2000;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        table th,
+        table td {
+            padding: 0.75rem !important;
+            text-align: center;
+        }
+
+        .card-header {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .card {
+            border-radius: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="fullLoading">
+        <div class="text-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div>
+            <p class="mt-3">กำลังโหลดข้อมูล...</p>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">UDRU - IT67</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html"><i class="fas fa-home"></i> หน้าหลัก</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#"><i class="fas fa-wallet"></i> เงินห้อง</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <img src="pic/pigCoin.png" class="logo-img" />
+        <h2 class="text-center mb-3">สรุปสถานะเงินห้อง</h2>
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-6">
+                <div class="card border-primary">
+                    <div class="card-body text-center">
+                        <h5>💰 เงินทั้งหมด: <span id="totalPayAll">-</span> บาท</h5>
+                        <h5 class="mt-2">📅 ยอดที่ยังไม่ได้ชำระเดือนนี้: <span id="totalPay">-</span> บาท</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="paidSection" class="mb-5 d-none">
+            <div class="card border-success shadow">
+                <div class="card-header bg-success text-white">
+                    ✅ รายชื่อผู้ที่ชำระแล้ว
+                </div>
+                <div class="card-body table-responsive">
+                    <table class="table table-bordered align-middle mb-0">
+                        <thead class="table-success">
+                            <tr>
+                                <th>รหัสนักศึกษา</th>
+                                <th>ชื่อ</th>
+                                <th>เวลาชำระล่าสุด</th>
+                            </tr>
+                        </thead>
+                        <tbody id="paidTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="unpaidSection" class="mb-5 d-none">
+            <div class="card border-danger shadow">
+                <div class="card-header bg-danger text-white">
+                    ❌ รายชื่อผู้ที่ยังไม่ชำระ
+                </div>
+                <div class="card-body table-responsive">
+                    <table class="table table-bordered align-middle mb-0">
+                        <thead class="table-danger">
+                            <tr>
+                                <th>รหัสนักศึกษา</th>
+                                <th>ชื่อ</th>
+                                <th>จำนวนเงินที่ต้องชำระ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="unpaidTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-light text-center text-muted py-3 mt-5 border-top">
+        <div>
+          คณะวิทยาศาสตร์ สาขาวิชาเทคโนโลยีสารสนเทศ<br>
+          <a href="https://www.udru.ac.th/" target="_blank" class="text-decoration-none fw-bold text-primary">
+            มหาวิทยาลัยราชภัฏอุดรธานี
+          </a>
+        </div>
+      </footer>
+
+    <script>
+        function formatDateThai(datetimeStr) {
+            const d = new Date(datetimeStr);
+            return d.toLocaleString('th-TH', {
+                year: 'numeric', month: 'long', day: 'numeric',
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+        }
+
+        fetch("https://script.google.com/macros/s/AKfycbwnl7dh1j5gdggH_9ow3mln2H4bAvWMT8V0Kxdd8JK474TsZLdTHyjKOXCpIZABESmtdw/exec")
+            .then(res => res.json())
+            .then(data => {
+                const students = data.it67;
+                const me = students.find(s => s.std_id === '67040233');
+
+                document.getElementById('totalPayAll').textContent = me?.pay_all ?? '-';
+                document.getElementById('totalPay').textContent = me?.pay ?? '-';
+
+                const paid = students.filter(s => s.status === 'SUC');
+                const unpaid = students.filter(s => s.status === 'NON');
+
+                const paidTable = document.getElementById('paidTable');
+                const unpaidTable = document.getElementById('unpaidTable');
+
+                paid.forEach(s => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td>${s.std_id}</td><td>${s.std_name}</td><td>${formatDateThai(s.latest_transfer)}</td>`;
+                    paidTable.appendChild(row);
+                });
+
+                unpaid.forEach(s => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td>${s.std_id}</td><td>${s.std_name}</td><td>${s.pay}</td>`;
+                    unpaidTable.appendChild(row);
+                });
+
+                document.getElementById('paidSection').classList.remove('d-none');
+                document.getElementById('unpaidSection').classList.remove('d-none');
+                document.getElementById('fullLoading').style.display = 'none';
+            })
+            .catch(() => {
+                Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาดในการโหลดข้อมูล' });
+                document.getElementById('fullLoading').style.display = 'none';
+            });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
