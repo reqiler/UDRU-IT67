@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UDRU - IT67</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Prompt&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+
+<body onload="initPaymentPage()">
+
+  <!-- Fullscreen Loading Overlay -->
+  <div id="fullLoading">
+    <div class="text-center">
+      <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div>
+      <p class="mt-3">กำลังโหลดข้อมูล...</p>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">UDRU - IT67</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
+        <ul class="navbar-nav mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" href="#"><i class="fas fa-home"></i> หน้าหลัก</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="accit67.html"><i class="fas fa-wallet"></i> เงินห้อง</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Form -->
+  <div class="form-container">
+    <img src="https://cdn-icons-png.flaticon.com/512/7465/7465540.png" class="logo-img" />
+    <h3 class="text-center mb-4">ตรวจสอบสถานะชำระเงิน</h3>
+    <form id="paymentForm">
+      <label for="studentId">รหัสนักศึกษา:</label>
+      <input type="text" class="form-control" id="studentId" placeholder="กรอกรหัสนักศึกษา" required>
+      <button type="submit" class="btn btn-primary w-100 mt-3">ตรวจสอบสถานะ</button>
+    </form>
+
+    <div id="paymentMode" class="text-center d-none mt-4">
+      <h4>เลือกวิธีการชำระเงิน</h4>
+      <div class="btn-group w-100 mb-2" role="group">
+        <button type="button" class="btn btn-outline-primary active" id="fullPayBtn">จ่ายเต็ม</button>
+        <button type="button" class="btn btn-outline-secondary" id="installmentBtn">ผ่อนจ่าย</button>
+      </div>
+  
+      <!-- ปุ่มเลือกจำนวนเงินเมื่อเลือกผ่อน -->
+      <div id="installmentOptions" class="mt-3 d-none">
+        <p>เลือกจำนวนเงินที่ต้องการผ่อน</p>
+        <div id="amountButtons" class="d-flex flex-wrap gap-2 justify-content-center"></div>
+      </div>
+    </div>
+
+    <div id="paymentInfo" class="alert mt-4 d-none text-center"></div>
+    
+    <div id="qrcodeBox" class="text-center d-none">
+      <p>กรุณาโอนเงินไปที่เบอร์ <strong>0876610109</strong></p>
+      <p>ชื่อบัญชี <strong>สุธีรภัทร์ การสมพรต</strong></p>
+      <div class="qrcode position-relative d-inline-block">
+        <img id="qrImage" src="" alt="QR พร้อมเพย์" class="img-fluid" />
+      </div>
+      <p id="amountText" class="mt-2 fw-bold"></p>
+
+      <label for="slipUpload" class="mt-3">แนบรูปสลิปโอนเงิน:</label>
+      <input type="file" class="form-control" id="slipUpload" accept=".jpg,.png" />
+      <img id="slipPreview" class="mt-3" style="display:none;" />
+
+      <!-- ✅ ปุ่มส่งข้อมูล -->
+      <button id="submitSlip" class="btn btn-success w-100 mt-3">
+        <i class="fa-solid fa-upload"></i> ส่งข้อมูล
+      </button>
+    </div>
+  </div>
+
+  <div class="mt-5 px-4">
+    <div class="row g-3 text-center">
+      <div class="col-6">
+        <a href="https://udru.link" target="_blank" class="menu-card p-3 d-block text-decoration-none">
+          <i class="fas fa-link fa-2x text-primary mb-2"></i>
+          <div class="fw-bold">เว็บย่อลิงก์</div>
+          <small class="text-muted">UDRU.link</small>
+        </a>
+      </div>
+      <div class="col-6">
+        <a href="https://www.facebook.com/csitudru" target="_blank" class="menu-card p-3 d-block text-decoration-none">
+          <i class="fab fa-facebook fa-2x text-primary mb-2"></i>
+          <div class="fw-bold">เพจสาขาวิชา</div>
+          <small class="text-muted">Facebook CS-IT UDRU</small>
+        </a>
+      </div>
+    </div>
+  </div>
+  
+
+  <footer class="bg-light text-center text-muted py-3 mt-5 border-top">
+    <div>
+      คณะวิทยาศาสตร์ สาขาวิชาเทคโนโลยีสารสนเทศ<br>
+      <a href="https://www.udru.ac.th/" target="_blank" class="text-decoration-none fw-bold text-primary">
+        มหาวิทยาลัยราชภัฏอุดรธานี
+      </a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
